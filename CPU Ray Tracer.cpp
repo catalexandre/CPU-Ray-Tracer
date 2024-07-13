@@ -25,8 +25,8 @@ int main()
         }
 
         image << "\r";
-    }
-    
+}
+
     cout << "\ndone";
 
     image.close();
