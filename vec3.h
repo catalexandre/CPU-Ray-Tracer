@@ -11,7 +11,7 @@ public:
 	
 	vec3() : component{ 0, 0, 0 } {}
 
-	vec3(double component0, double component1, double component2) : component{ component0, component1, component1 } {}
+	vec3(double component0, double component1, double component2) : component{ component0, component1, component2 } {}
 
 	double x() const { return component[0]; }
 	double y() const { return component[1]; }
