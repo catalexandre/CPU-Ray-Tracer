@@ -21,7 +21,7 @@ public:
 		return color;
 	}
 
-	bool hit(const ray& r) const
+	double hit(const ray& r) const
 	{
 		auto oc = r.origin() - center;
 		auto a = dot(r.direction(), r.direction());
@@ -29,7 +29,15 @@ public:
 		auto c = dot(oc, oc) - radius * radius;
 		auto discriminant = b * b - 4 * a * c;
 
-		return (discriminant >= 0);
+		if (discriminant < 0)
+		{
+			return discriminant;
+		}
+
+		else
+		{
+			return (b - sqrt(discriminant)) / (2.0 * a);
+		}
 	}
 
 private:

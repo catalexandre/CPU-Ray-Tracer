@@ -20,7 +20,7 @@ int main()
     int height = width / aspectRatio;
 
     double focalLength = 1.0; //the focal length is the distance from the camera where the viewport plane is placed
-    vec3 lookAt = vec3(0.08, 0.2, -1); //Consider making this a unit vector
+    vec3 lookAt = vec3(0, 0, -1); //Consider making this a unit vector
     lookAt = unitVector(lookAt);
     vec3 up = vec3(0, 1, 0); //What direction is considered up. It is used to find what is right by doing a cross product lookAt cross up
     vec3 right = cross(lookAt, up);
@@ -58,11 +58,16 @@ int main()
 
             ray currentRay = ray(cameraLocation, zerothPixelLocation + y * deltaY + x * deltaX - cameraLocation);
 
-            if (s.hit(currentRay))
-            {
-                vec3 normalAtHit = vec3();
+            double distanceAlongRay = s.hit(currentRay);
 
-                image << s.getColor() << " ";
+            if (distanceAlongRay >= 0)
+            {
+                vec3 normalAtHit = unitVector(currentRay.pointAlong(distanceAlongRay) - s.getCenter());
+                vec3 rayColor = 0.5 * vec3(normalAtHit.x() + 1, normalAtHit.y() + 1, normalAtHit.z() + 1);
+
+                cout << normalAtHit << "\n";
+                
+                image << int(rayColor.x() * 255) << " " << int(rayColor.y() * 255) << " " << int(rayColor.z() * 255) << " ";
             }
 
             else
