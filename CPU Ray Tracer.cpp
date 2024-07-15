@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include "vec3.h"
 #include "ray.h"
@@ -19,7 +20,7 @@ int main()
     int height = width / aspectRatio;
 
     double focalLength = 1.0; //the focal length is the distance from the camera where the viewport plane is placed
-    vec3 lookAt = vec3(0, 0, -1); //Consider making this a unit vector
+    vec3 lookAt = vec3(0.08, 0.2, -1); //Consider making this a unit vector
     lookAt = unitVector(lookAt);
     vec3 up = vec3(0, 1, 0); //What direction is considered up. It is used to find what is right by doing a cross product lookAt cross up
     vec3 right = cross(lookAt, up);
@@ -44,7 +45,7 @@ int main()
 
     image << "P3\r" << width << " " << height << "\r255\r";
 
-    sphere s = sphere(vec3(0, 0, 4), 1.0, vec3(255, 120, 67));
+    sphere s = sphere(vec3(0, 0, 4), 1.0, vec3(0, 120, 200));
 
     cout << s.getColor() << "\n";
 
@@ -57,19 +58,27 @@ int main()
 
             ray currentRay = ray(cameraLocation, zerothPixelLocation + y * deltaY + x * deltaX - cameraLocation);
 
-            //cout << currentRay.origin() << " " << currentRay.direction() << "\n";
-
             if (s.hit(currentRay))
             {
+                vec3 normalAtHit = vec3();
+
                 image << s.getColor() << " ";
             }
 
-            else { image << 0 << " " << 0 << " " << 0 << " "; }
+            else
+            {
+                vec3 currentRayDirection = currentRay.direction();
+                vec3 currentRayDirectionXZ = vec3(currentRayDirection.x(), 0, currentRayDirection.z());
+
+                auto currentRayUpwardsAngle = acos(dot(currentRayDirection, currentRayDirectionXZ) / (currentRayDirection.length() * currentRayDirectionXZ.length()));
+
+                image << vec3(int(0 * currentRayUpwardsAngle) + int(255 * (1 - currentRayUpwardsAngle)), int(0 * currentRayUpwardsAngle) + int(255 * (1 - currentRayUpwardsAngle)), int(255 * currentRayUpwardsAngle) + int(255 * (1 - currentRayUpwardsAngle))) << " ";
+            }
+
+            image << "\r";
         }
 
-        image << "\r";
-}
-
+    }
     cout << "\ndone";
 
     image.close();
