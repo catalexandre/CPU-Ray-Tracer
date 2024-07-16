@@ -18,7 +18,7 @@ public:
 	camera(int w, double AR, double FL, vec3 LA, vec3& u, double x, double y, double z, double VS) : 
         width(w),
         height(w / AR),
-	    focalLength(FL),
+        focalLength(FL),
         lookAt(unitVector(LA)),
         up(u), right(cross(LA, u)),
         cameraLocation(vec3(x, y, z)),
