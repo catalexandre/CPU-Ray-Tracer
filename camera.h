@@ -16,18 +16,18 @@ class camera
 public:
 
 	camera(int w, double AR, double FL, vec3 LA, vec3& u, double x, double y, double z, double VS) : 
-        width(w), 
+        width(w),
         height(w / AR),
-		focalLength(FL),
+	    focalLength(FL),
         lookAt(unitVector(LA)),
         up(u), right(cross(LA, u)),
         cameraLocation(vec3(x, y, z)),
         viewScale(VS),
-		viewWidth(right * VS),
+        viewWidth(right * VS),
         viewHeight((viewWidth / (double(w) / height)).length() * -u),
         deltaX(viewWidth / w),
         deltaY(viewHeight / height),
-		zerothPixelLocation(cameraLocation + LA * FL - viewWidth / 2 + deltaX / 2 - viewHeight / 2 + deltaY / 2) {}
+        zerothPixelLocation(cameraLocation + LA * FL - viewWidth / 2 + deltaX / 2 - viewHeight / 2 + deltaY / 2) {}
 
 	const void render(string imageName) const
 	{
