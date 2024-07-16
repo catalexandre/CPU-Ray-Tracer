@@ -1,6 +1,12 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "ray.h"
+#include "vec3.h"
+
+using namespace std;
+
+
 class sphere
 {
 public:

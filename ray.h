@@ -1,6 +1,10 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include "vec3.h"
+
+using namespace std;
+
 class ray
 {
 public:
