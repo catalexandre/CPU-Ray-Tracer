@@ -8,6 +8,8 @@
 #include "vec3.h"
 #include "ray.h"
 #include "sphere.h"
+#include "scene.h"
+#include "hitRecord.h"
 
 using namespace std;
 
@@ -15,7 +17,7 @@ class camera
 {
 public:
 
-	camera(int w, double AR, double FL, vec3 LA, vec3& u, double x, double y, double z, double VS) : 
+	camera(int w, double AR, double FL, vec3 LA, vec3& u, double x, double y, double z, double VS, scene s) : 
         width(w),
         height(w / AR),
         focalLength(FL),
@@ -27,15 +29,16 @@ public:
         viewHeight((viewWidth / (double(w) / height)).length() * -u),
         deltaX(viewWidth / w),
         deltaY(viewHeight / height),
-        zerothPixelLocation(cameraLocation + LA * FL - viewWidth / 2 + deltaX / 2 - viewHeight / 2 + deltaY / 2) {}
+        zerothPixelLocation(cameraLocation + LA * FL - viewWidth / 2 + deltaX / 2 - viewHeight / 2 + deltaY / 2),
+        scene(s){}
 
-	const void render(string imageName) const
+	const void render(scene scene, string imageName) const
 	{
 		std::ofstream image(imageName);
 
-		image << "P3\r" << width << " " << height << "\r255\r";
+        cout << zerothPixelLocation << "\n";
 
-        sphere s = sphere(vec3(0, 0, 4), 1, vec3(0, 120, 200));
+	    image << "P3\r" << width << " " << height << "\r255\r";
 
         for (int y = 0; y < height; y++)
         {
@@ -45,9 +48,9 @@ public:
             {
                 ray currentRay = ray(cameraLocation, zerothPixelLocation + y * deltaY + x * deltaX - cameraLocation);
 
-                double distanceAlongRay = s.hit(currentRay);
+                hitRecord hit = scene.sendRay(currentRay);
 
-                if (distanceAlongRay >= 0)
+                if (hit.getDistance() >= 0)
                 {
                     vec3 normalAtHit = unitVector(currentRay.pointAlong(distanceAlongRay) - s.getCenter());
                     vec3 rayColor = 255 * 0.5 * vec3(normalAtHit.x() + 1, normalAtHit.y() + 1, normalAtHit.z() + 1);
@@ -71,8 +74,8 @@ public:
             }
 
         }
-
-		image.close();
+        
+        image.close();
 	}
 
 
@@ -80,6 +83,7 @@ private:
 	int width, height;
 	double focalLength, viewScale;
 	vec3 lookAt, up, right, cameraLocation, viewWidth, viewHeight, deltaX, deltaY, zerothPixelLocation;
+    scene scene;
 };
 
 #endif CAMERA_H

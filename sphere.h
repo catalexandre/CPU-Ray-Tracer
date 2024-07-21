@@ -3,11 +3,12 @@
 
 #include "ray.h"
 #include "vec3.h"
+#include "solid.h"
 
 using namespace std;
 
 
-class sphere
+class sphere : public solid
 {
 public:
 	sphere(const vec3& c, double r, const vec3& col) : center(c), radius(r), color(col) {}
@@ -27,13 +28,13 @@ public:
 		return color;
 	}
 
-	double hit(const ray& r) const
+	const bool hit(const ray& r) const override
 	{
 		auto oc = r.origin() - center;
-		auto a = dot(r.direction(), r.direction());
-		auto b = 2 * dot(r.direction(), oc);
-		auto c = dot(oc, oc) - radius * radius;
-		auto discriminant = b * b - 4 * a * c;
+		auto a = r.direction().lengthSquared();
+		auto b = dot(r.direction(), oc);
+		auto c = oc.lengthSquared() - radius * radius;
+		auto discriminant = b * b - a * c;
 
 		if (discriminant < 0)
 		{
@@ -42,7 +43,7 @@ public:
 
 		else
 		{
-			return (b - sqrt(discriminant)) / (2.0 * a);
+			return (-b - sqrt(discriminant)) / a;
 		}
 	}
 
